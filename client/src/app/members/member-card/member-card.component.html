@@ -1,7 +1,7 @@
 <div class="card mb-4" *ngIf="member">
   <div class="card-image-wrapper">
     <img
-      src="{{ member?.mainPhotoUrl }}"
+      src="{{ member?.mainPhotoUrl || './assets/user.png' }}"
       alt="{{ member?.knownAs }}"
       class="card-img-top"
     />
