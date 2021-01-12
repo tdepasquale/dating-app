@@ -2,8 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { take } from 'rxjs/operators';
 import { IMember } from 'src/app/_models/member';
+import { IPhoto } from 'src/app/_models/photo';
 import { IUser } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
+import { MembersService } from 'src/app/_services/members.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -18,7 +20,10 @@ export class PhotoEditorComponent implements OnInit {
   baseUrl = environment.apiUrl;
   user: IUser | null = null;
 
-  constructor(private accountService: AccountService) {
+  constructor(
+    private accountService: AccountService,
+    private membersService: MembersService
+  ) {
     this.accountService.currentUser$
       .pipe(take(1))
       .subscribe((user) => (this.user = user));
@@ -53,5 +58,19 @@ export class PhotoEditorComponent implements OnInit {
         this.member?.photos.push(photo);
       }
     };
+  }
+
+  setMainPhoto(newMainPhoto: IPhoto) {
+    this.membersService.setMainPhoto(newMainPhoto.id).subscribe(() => {
+      this.user!.mainPhotoUrl = newMainPhoto.url;
+
+      this.accountService.setCurrentUser(this.user);
+
+      this.member!.mainPhotoUrl = newMainPhoto.url;
+      this.member!.photos.forEach((photo) => {
+        if (photo.isMain) photo.isMain = false;
+        if (photo.id === newMainPhoto.id) photo.isMain = true;
+      });
+    });
   }
 }
