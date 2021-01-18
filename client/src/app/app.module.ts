@@ -24,6 +24,7 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { SharedModule } from './_modules/shared.module';
 import { TextInputComponent } from './_forms/text-input/text-input.component';
+import { DateInputComponent } from './_forms/date-input/date-input.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   pbColor: '#CE4414',
@@ -51,6 +52,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     MemberEditComponent,
     PhotoEditorComponent,
     TextInputComponent,
+    DateInputComponent,
   ],
   imports: [
     BrowserModule,

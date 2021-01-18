@@ -33,7 +33,9 @@
       dropdown
     >
       <img
-        src="{{ user!.mainPhotoUrl ? user!.mainPhotoUrl : '' }}"
+        src="{{
+          user!.mainPhotoUrl ? user!.mainPhotoUrl : './assets/user.png'
+        }}"
         alt="{{user?.username}"
       />
       <a class="dropdown-toggle text-light ml-2" dropdownToggle
