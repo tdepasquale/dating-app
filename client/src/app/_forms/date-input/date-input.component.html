@@ -2,11 +2,11 @@
   <input
     type="text"
     [class.is-invalid]="ngControl.touched && ngControl.invalid"
-    [formControl]="ngControl.control"
+    [formControl]="$any(ngControl!.control!)"
     placeholder="{{ label }}"
     bsDatepicker
     [bsConfig]="bsConfig"
-    [maxDate]="maxDate"
+    [maxDate]="maxDate!"
     class="form-control"
   />
   <div class="invalid-feedback" *ngIf="ngControl.control?.errors?.required">
