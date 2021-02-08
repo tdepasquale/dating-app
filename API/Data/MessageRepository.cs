@@ -34,7 +34,10 @@ namespace API.Data
 
     public async Task<Message> GetMessage(int id)
     {
-      return await _context.Messages.FindAsync(id);
+      return await _context.Messages
+        .Include(message => message.Sender)
+        .Include(message => message.Recipient)
+        .SingleOrDefaultAsync(message => message.Id == id);
     }
 
     public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
@@ -43,9 +46,9 @@ namespace API.Data
 
       query = messageParams.Container switch
       {
-        "Inbox" => query.Where(user => user.Recipient.UserName == messageParams.Username),
-        "Outbox" => query.Where(user => user.Sender.UserName == messageParams.Username),
-        _ => query.Where(user => user.Recipient.UserName == messageParams.Username && user.DateRead == null)
+        "Inbox" => query.Where(user => user.Recipient.UserName == messageParams.Username && user.RecipientDeleted == false),
+        "Outbox" => query.Where(user => user.Sender.UserName == messageParams.Username && user.SenderDeleted == false),
+        _ => query.Where(user => user.Recipient.UserName == messageParams.Username && user.RecipientDeleted == false && user.DateRead == null)
       };
 
       var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
@@ -59,9 +62,10 @@ namespace API.Data
         .Include(user => user.Sender).ThenInclude(user => user.Photos)
         .Include(user => user.Recipient).ThenInclude(user => user.Photos)
         .Where(message => message.Recipient.UserName == currentUsername
+                            && message.RecipientDeleted == false
                             && message.Sender.UserName == recipientUsername
                             || message.Recipient.UserName == recipientUsername
-                            && message.Sender.UserName == currentUsername)
+                            && message.Sender.UserName == currentUsername && message.SenderDeleted == false)
         .OrderBy(message => message.MessageSent)
         .ToListAsync();
 
