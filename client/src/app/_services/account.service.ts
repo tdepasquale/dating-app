@@ -36,6 +36,9 @@ export class AccountService {
   }
 
   setCurrentUser(user: IUser | null) {
+    user!.roles = [];
+    const roles = this.getDecodedToken(user?.token!).role;
+    Array.isArray(roles) ? (user!.roles = roles) : user!.roles.push(roles);
     sessionStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
@@ -43,5 +46,9 @@ export class AccountService {
   logout() {
     sessionStorage.removeItem('user');
     this.currentUserSource.next(null);
+  }
+
+  getDecodedToken(token: string) {
+    return JSON.parse(atob(token.split('.')[1]));
   }
 }

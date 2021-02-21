@@ -4,4 +4,5 @@ export interface IUser {
   mainPhotoUrl: string;
   knownAs: string;
   gender: string;
+  roles: string[];
 }
